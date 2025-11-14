@@ -26,6 +26,18 @@
         </ul>
       </div>
     @endif
+   
+    @if ($errors->any())
+    <div class="bg-red-50 border border-red-200 p-3 rounded">
+    <strong>Veuillez corriger les erreurs suivantes :</strong>
+    <ul class="list-disc ml-6">
+      @foreach ($errors->all() as $error)
+        <li>{{ $error }}</li>
+      @endforeach
+    </ul>
+  </div>
+  @endif
+
 
     @yield('content')
   </main>
