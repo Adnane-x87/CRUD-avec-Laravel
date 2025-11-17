@@ -22,6 +22,11 @@ class PageController extends Controller
         return view('about', ['title' => 'À propos du projet']);
     }
 
+    public function contact(): View
+    {
+        return view('contact', ['title' => 'Contact']);
+    }
+
     public function articles(): View
     {
         return view('articles.index', [
