@@ -10,39 +10,83 @@ class ArticleSeeder extends Seeder
 {
     public function run(): void
     {
-        $path = storage_path('seeds/articles.csv');
+        $articles = [
+            [
+                'title' => 'Introduction à Laravel',
+                'excerpt' => 'Découvrez les bases du framework Laravel et comment créer votre première application web.',
+                'views' => 150,
+                'published' => true,
+            ],
+            [
+                'title' => 'Les Migrations Laravel',
+                'excerpt' => 'Apprenez à gérer votre base de données avec les migrations Laravel de manière efficace.',
+                'views' => 89,
+                'published' => true,
+            ],
+            [
+                'title' => 'Authentification avec Laravel UI',
+                'excerpt' => 'Guide complet pour implémenter un système d\'authentification avec Laravel UI.',
+                'views' => 234,
+                'published' => true,
+            ],
+            [
+                'title' => 'Les Relations Eloquent',
+                'excerpt' => 'Maîtrisez les relations entre modèles avec Eloquent ORM.',
+                'views' => 178,
+                'published' => true,
+            ],
+            [
+                'title' => 'Validation des Formulaires',
+                'excerpt' => 'Techniques de validation des données de formulaires dans Laravel.',
+                'views' => 92,
+                'published' => true,
+            ],
+            [
+                'title' => 'Les Middleware Laravel',
+                'excerpt' => 'Comprendre et utiliser les middleware pour filtrer les requêtes HTTP.',
+                'views' => 67,
+                'published' => true,
+            ],
+            [
+                'title' => 'API REST avec Laravel',
+                'excerpt' => 'Créez une API RESTful complète avec Laravel et testez-la.',
+                'views' => 312,
+                'published' => true,
+            ],
+            [
+                'title' => 'Les Jobs et Queues',
+                'excerpt' => 'Gérez les tâches asynchrones avec les jobs et les queues Laravel.',
+                'views' => 45,
+                'published' => false,
+            ],
+            [
+                'title' => 'Déploiement Laravel',
+                'excerpt' => 'Guide pratique pour déployer votre application Laravel en production.',
+                'views' => 201,
+                'published' => true,
+            ],
+            [
+                'title' => 'Tests Automatisés',
+                'excerpt' => 'Écrivez des tests unitaires et fonctionnels pour votre application Laravel.',
+                'views' => 56,
+                'published' => true,
+            ],
+        ];
 
-        if (! file_exists($path)) {
-            $this->command->warn("⚠️  Fichier manquant : $path (seed ignoré)");
-            return;
-        }
-
-        if (($handle = fopen($path, 'r')) === false) {
-            $this->command->error('❌ Impossible d’ouvrir le fichier CSV.');
-            return;
-        }
-
-        $header = fgetcsv($handle, 1000, ';'); // lire la première ligne (en-têtes)
-
-        while (($row = fgetcsv($handle, 1000, ';')) !== false) {
-            $data = array_combine($header, $row);
-
-            $title = trim($data['title'] ?? 'Sans titre');
-            $slug  = $data['slug'] ?: Str::slug($title);
-
+        foreach ($articles as $articleData) {
+            $slug = Str::slug($articleData['title']);
+            
             Article::updateOrCreate(
                 ['slug' => $slug],
                 [
-                    'title'     => $title,
-                    'excerpt'   => $data['excerpt'] ?? null,
-                    'views'     => (int)($data['views'] ?? 0),
-                    'published' => filter_var($data['published'] ?? true, FILTER_VALIDATE_BOOL),
+                    'title' => $articleData['title'],
+                    'excerpt' => $articleData['excerpt'],
+                    'views' => $articleData['views'],
+                    'published' => $articleData['published'],
                 ]
             );
         }
 
-        fclose($handle);
-
-        $this->command->info('✅ Articles importés avec succès depuis le CSV.');
+        $this->command->info('✅ ' . count($articles) . ' articles créés avec succès.');
     }
 }

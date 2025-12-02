@@ -13,3 +13,7 @@ Route::get('/contact', [PageController::class, 'contact'])->name('contact');
 
 Route::resource('articles', ArticleController::class)->except(['show']);
 
+
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
