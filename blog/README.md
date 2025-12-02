@@ -1,61 +1,64 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+# 🛡️ Security and Authorization Plan (V6)
 
-## About Laravel
+This document outlines the security strategy for the Laravel Blog project. It defines the zones, roles, and authorization rules ("who can do what") before technical implementation.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 1️⃣ Main Areas of the Blog (Zones)
+List of public and protected areas in the application.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+| Area / Page | URL (Example) | Access Type |
+| :--- | :--- | :--- |
+| **Blog Homepage** | `/` | 🟢 **Public** (Everyone) |
+| **List of Articles** | `/articles` | 🟢 **Public** (Everyone) |
+| **Single Article Page** | `/articles/{slug}` | 🟢 **Public** (Everyone) |
+| **Admin Dashboard** | `/admin` | 🔒 **Protected** (Logged-in users only) |
+| **Create Article Form** | `/admin/articles/create` | 🔒 **Protected** (Authors only) |
+| **Edit Article Form** | `/admin/articles/{id}/edit` | 🔒 **Protected** (Owner of the article) |
+| **Delete Action** | `/admin/articles/{id}/delete` | 🔒 **Protected** (Owner or Admin) |
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## 2️⃣ User Roles
+Definition of the actors interacting with the system.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+| Role | Description |
+| :--- | :--- |
+| **Visitor** | A non-authenticated user. Can only view public content. |
+| **Author** | A logged-in user who creates content. Can manage their *own* articles. |
+| **Admin** | A logged-in user responsible for moderation. Can delete *any* article but (per rules) does not write articles. |
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+---
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 3️⃣ Authorization Matrix ("Who has the right to do what?")
+This table defines the permissions for each role.
 
-## Laravel Sponsors
+| Action / Role | 👤 Visitor | ✍️ Author | 🛡️ Admin |
+| :--- | :---: | :---: | :---: |
+| **Read Public Articles** | ✔️ | ✔️ | ✔️ |
+| **Login / Logout** | ✔️ | ✔️ | ✔️ |
+| **Access Dashboard (`/admin`)** | ❌ | ✔️ | ✔️ |
+| **Create a new Article** | ❌ | ✔️ | ❌ |
+| **Edit *Own* Article** | ❌ | ✔️ | ❌ |
+| **Delete *Own* Article** | ❌ | ✔️ | ✔️ |
+| **Delete *Any* Article** | ❌ | ❌ | ✔️ |
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+*(Note: In this specific V6 configuration, Admins focus on moderation/deletion rather than creation).*
 
-### Premium Partners
+---
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## 4️⃣ Technical Implementation Strategy (Laravel Tools)
+Mapping business rules to Laravel features for the upcoming tutorials.
 
-## Contributing
+*   **Authentication (Who is logged in?):**
+    *   We will use **Laravel UI** to handle Login, Registration, and Password Reset.
+    *   This answers the question: *"Is the user connected?"*
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+*   **Route Protection (Access to `/admin`):**
+    *   We will use **Middleware (`auth`)** to block non-connected users (Visitors) from accessing the dashboard.
 
-## Code of Conduct
+*   **Role Identification:**
+    *   We will distinguish Admins from Authors using a database column (e.g., `is_admin`) or a specific Role check on `Auth::user()`.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+*   **Fine-grained Permissions (Delete/Edit rules):**
+    *   To ensure an Author can only delete *their own* article, while an Admin can delete *anything*, we will use **Laravel Gates** and **Policies**.
+    *   This handles the logic: *"User X wants to delete Article Y. Are they allowed?"*
