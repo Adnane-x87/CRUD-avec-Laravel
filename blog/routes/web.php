@@ -1,18 +1,28 @@
 <?php
-
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\PageController;
 use App\Http\Controllers\ArticleController;
+use Illuminate\Support\Facades\Auth;
+
+Route::get('/', fn() => redirect()->route('admin.dashboard'));
+
+Route::get('/about', function () {
+    return view('about');
+})->name('about');
+
+Route::get('/contact', function () {
+    return view('contact');
+})->name('contact');
 
 
+Route::middleware(['auth'])->group(function () {
+     Route::get('/admin', function () {
+        return view('admin.dashboard');
+     })->name('admin.dashboard');
 
-Route::get('/', [PageController::class, 'home'])->name('home');
-
-Route::get('/a-propos', [PageController::class, 'about'])->name('about');
-Route::get('/contact', [PageController::class, 'contact'])->name('contact');
+     Route::get('/admin/articles', [ArticleController::class, 'index'])->name('admin.articles.index');
+});
 
 Route::resource('articles', ArticleController::class)->except(['show']);
-
 
 Auth::routes();
 
