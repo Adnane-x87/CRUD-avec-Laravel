@@ -17,12 +17,12 @@ class ArticleController extends Controller
     public function index(): View
     {
         $articles = Article::latest('id')->paginate(5);
-        return view('articles.index', compact('articles'));
+        return view('admin.articles.index', compact('articles'));
     }
 
     public function create(): View
     {
-        return view('articles.create');
+        return view('admin.articles.create');
     }
 
     public function store(StoreArticleRequest $request): RedirectResponse
@@ -35,13 +35,13 @@ class ArticleController extends Controller
         $data['slug'] ??= Str::slug($data['title']);
         Article::create($data);
 
-        return redirect()->route('articles.index')
+        return redirect()->route('admin.articles.index')
             ->with('status', '✅ Article créé avec succès.');
     }
 
     public function edit(Article $article): View
     {
-        return view('articles.edit', compact('article'));
+        return view('admin.articles.edit', compact('article'));
     }
 
     public function update(UpdateArticleRequest $request, Article $article): RedirectResponse
@@ -50,7 +50,7 @@ class ArticleController extends Controller
         $data['slug'] = $data['slug'] ?: Str::slug($data['title']);
         $article->update($data);
 
-        return redirect()->route('articles.index')
+        return redirect()->route('admin.articles.index')
             ->with('status', '✏️ Article mis à jour.');
     }
 
@@ -62,7 +62,7 @@ class ArticleController extends Controller
 
         $article->delete();
 
-        return redirect()->route('articles.index')
+        return redirect()->route('admin.articles.index')
             ->with('status', '🗑️ Article supprimé.');
     }
 }

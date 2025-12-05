@@ -23,7 +23,7 @@
                         <h5>Navigation rapide :</h5>
                         <ul class="list-group">
                             <li class="list-group-item">
-                                <a href="{{ route('articles.index') }}" class="text-decoration-none">📝 Voir les articles</a>
+                                <a href="{{ route('admin.articles.index') }}" class="text-decoration-none">📝 Voir les articles</a>
                             </li>
                             <li class="list-group-item">
                                 <a href="{{ route('about') }}" class="text-decoration-none">ℹ️ À Propos</a>

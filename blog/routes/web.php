@@ -14,15 +14,17 @@ Route::get('/contact', function () {
 })->name('contact');
 
 
+
 Route::middleware(['auth'])->group(function () {
      Route::get('/admin', function () {
         return view('admin.dashboard');
      })->name('admin.dashboard');
 
-     Route::get('/admin/articles', [ArticleController::class, 'index'])->name('admin.articles.index');
+     // Admin article routes with admin.articles.* names
+     Route::resource('admin/articles', ArticleController::class)
+          ->names('admin.articles')
+          ->except(['show']);
 });
-
-Route::resource('articles', ArticleController::class)->except(['show']);
 
 Auth::routes();
 
